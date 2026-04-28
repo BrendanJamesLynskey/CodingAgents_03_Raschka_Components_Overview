@@ -1,0 +1,661 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CodingAgents 03 &mdash; Components of a Coding Agent &mdash; Overview</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-primary: #0a0a0a; --bg-card: #0d1117; --bg-code: #161b22;
+            --text-primary: #e6edf3; --text-secondary: #8b949e;
+            --accent: #76B900; --accent-dim: #76B90044; --accent-glow: #76B90033;
+            --border: #21262d;
+            --font-display: 'Space Grotesk', sans-serif;
+            --font-mono: 'JetBrains Mono', 'Fira Code', monospace;
+            --font-body: 'Inter', sans-serif;
+            --max-width: 900px;
+        }
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        html { scroll-behavior: smooth; }
+        body { background: var(--bg-primary); color: var(--text-primary);
+               font-family: var(--font-body); font-size: 17px; line-height: 1.7;
+               overflow-x: hidden; }
+        .hero { min-height: 100vh; display: flex; flex-direction: column;
+                justify-content: center; align-items: center;
+                padding: 2rem 1.5rem; text-align: center; position: relative; }
+        .hero::before { content: ''; position: absolute; top: 0; left: 50%;
+                        transform: translateX(-50%); width: 600px; height: 600px;
+                        background: radial-gradient(circle, var(--accent-glow) 0%, transparent 70%);
+                        pointer-events: none; z-index: 0; }
+        .hero > * { position: relative; z-index: 1; }
+        .series-label { font-family: var(--font-mono); font-size: 0.85rem;
+                        color: var(--accent); letter-spacing: 0.15em;
+                        text-transform: uppercase; margin-bottom: 1rem; }
+        .hero h1 { font-family: var(--font-display);
+                   font-size: clamp(2rem, 5vw, 3.2rem); font-weight: 700;
+                   color: var(--text-primary); line-height: 1.2; margin-bottom: 1rem; }
+        .hero h1 .accent { color: var(--accent); }
+        .hero .subtitle { font-size: 1.1rem; color: var(--text-secondary);
+                          max-width: 720px; margin-bottom: 2rem; }
+        .tags { display: flex; flex-wrap: wrap; gap: 0.5rem;
+                justify-content: center; margin-bottom: 2.5rem; }
+        .tag { font-family: var(--font-mono); font-size: 0.75rem;
+               padding: 0.25rem 0.75rem; border-radius: 999px;
+               border: 1px solid var(--accent); color: var(--accent);
+               background: var(--accent-dim); white-space: nowrap; }
+        .pipeline { display: flex; flex-wrap: wrap; align-items: center;
+                    justify-content: center; gap: 0.25rem; margin-bottom: 1rem;
+                    max-width: var(--max-width); }
+        .pipeline-step { font-family: var(--font-mono); font-size: 0.7rem;
+                         padding: 0.3rem 0.7rem; background: var(--bg-card);
+                         border: 1px solid var(--border); border-radius: 4px;
+                         color: var(--text-secondary); white-space: nowrap; }
+        .pipeline-arrow { color: var(--accent); font-size: 0.9rem; font-weight: 700; }
+        .slide { min-height: 100vh; max-width: var(--max-width);
+                 margin: 0 auto; padding: 4rem 1.5rem; position: relative;
+                 display: flex; flex-direction: column; justify-content: center; }
+        .slide-number { font-family: var(--font-display); font-size: 5rem;
+                        font-weight: 700; color: var(--accent-dim);
+                        position: absolute; top: 2rem; right: 1.5rem;
+                        line-height: 1; user-select: none; }
+        .slide h2 { font-family: var(--font-display); font-size: 1.9rem;
+                    font-weight: 700; color: var(--accent); margin-bottom: 1.5rem;
+                    line-height: 1.25; }
+        .slide h3 { font-family: var(--font-display); font-size: 1.3rem;
+                    font-weight: 600; color: var(--text-primary);
+                    margin-top: 1.5rem; margin-bottom: 0.75rem; }
+        .slide p { margin-bottom: 1rem; color: var(--text-secondary); }
+        .slide p strong { color: var(--text-primary); }
+        .slide ul, .slide ol { margin-bottom: 1rem; padding-left: 1.5rem;
+                               color: var(--text-secondary); }
+        .slide li { margin-bottom: 0.4rem; }
+        .slide li strong { color: var(--text-primary); }
+        .slide code { font-family: var(--font-mono); font-size: 0.88em;
+                      background: var(--bg-code); border: 1px solid var(--border);
+                      padding: 0.05rem 0.35rem; border-radius: 3px; color: #c9d1d9; }
+        .code-block { background: var(--bg-code); border: 1px solid var(--border);
+                      border-radius: 8px; margin: 1.25rem 0; overflow: hidden; }
+        .code-header { font-family: var(--font-mono); font-size: 0.75rem;
+                       color: var(--accent); background: rgba(118, 185, 0, 0.08);
+                       padding: 0.4rem 1rem; border-bottom: 1px solid var(--border); }
+        .code-block pre { margin: 0; padding: 1rem; overflow-x: auto; }
+        .code-block code { font-family: var(--font-mono); font-size: 0.85rem;
+                           line-height: 1.6; color: #c9d1d9; background: transparent;
+                           border: none; padding: 0; }
+        .kw { color: #ff7b72; } .fn { color: #d2a8ff; } .str { color: #a5d6ff; }
+        .cm { color: #8b949e; font-style: italic; } .num { color: #79c0ff; }
+        .type { color: #ffa657; }
+        .table-wrap { overflow-x: auto; margin: 1.25rem 0; border-radius: 8px;
+                      border: 1px solid var(--border); }
+        table { width: 100%; border-collapse: collapse; font-size: 0.9rem; }
+        th { background: var(--bg-code); color: var(--accent); font-weight: 600;
+             text-align: left; padding: 0.75rem 1rem; border-bottom: 1px solid var(--border);
+             font-family: var(--font-display); white-space: nowrap; }
+        td { padding: 0.6rem 1rem; border-bottom: 1px solid var(--border);
+             color: var(--text-secondary); }
+        tr:last-child td { border-bottom: none; }
+        tr:nth-child(even) td { background: rgba(13, 17, 23, 0.5); }
+        .diagram-flow { display: flex; flex-wrap: wrap; align-items: center;
+                        justify-content: center; gap: 0.5rem; margin: 1.5rem 0;
+                        padding: 1.5rem; background: var(--bg-card);
+                        border: 1px solid var(--border); border-radius: 8px; }
+        .diagram-box { font-family: var(--font-mono); font-size: 0.85rem;
+                       padding: 0.5rem 1rem; background: var(--bg-code);
+                       border: 1px solid var(--border); border-radius: 6px;
+                       color: var(--text-primary); text-align: center; white-space: nowrap; }
+        .diagram-box.accent { border-color: var(--accent); color: var(--accent);
+                              background: rgba(118, 185, 0, 0.08); }
+        .diagram-box.dim { color: var(--text-secondary); border-color: var(--border); }
+        .diagram-arrow { color: var(--accent); font-size: 1.3rem; font-weight: 700; }
+        .diagram-vertical { display: flex; flex-direction: column; align-items: center;
+                            gap: 0.3rem; margin: 1.5rem 0; padding: 1.5rem;
+                            background: var(--bg-card); border: 1px solid var(--border);
+                            border-radius: 8px; }
+        .diagram-vertical .diagram-arrow { font-size: 1.1rem; }
+        .diagram-grid { display: grid; gap: 0.75rem; margin: 1.5rem 0;
+                        padding: 1.5rem; background: var(--bg-card);
+                        border: 1px solid var(--border); border-radius: 8px; }
+        .diagram-grid.cols-2 { grid-template-columns: 1fr 1fr; }
+        .diagram-grid.cols-3 { grid-template-columns: 1fr 1fr 1fr; }
+        .diagram-panel { padding: 1rem; background: var(--bg-code);
+                         border: 1px solid var(--border); border-radius: 6px; }
+        .diagram-panel.accent-border { border-left: 3px solid var(--accent); }
+        .diagram-panel h4 { font-family: var(--font-display); font-size: 1rem;
+                            color: var(--accent); margin-bottom: 0.5rem; }
+        .diagram-panel p, .diagram-panel ul { font-size: 0.85rem; }
+        .callout { background: var(--bg-card); border-left: 3px solid var(--accent);
+                   border-radius: 0 8px 8px 0; padding: 1rem 1.25rem; margin: 1.25rem 0; }
+        .callout p { margin-bottom: 0; }
+        .callout p + p { margin-top: 0.5rem; }
+        .callout .callout-label { font-family: var(--font-mono); font-size: 0.75rem;
+                                  color: var(--accent); text-transform: uppercase;
+                                  letter-spacing: 0.1em; margin-bottom: 0.3rem; }
+        .contents-list { list-style: none; padding-left: 0; counter-reset: contents; }
+        .contents-list li { counter-increment: contents; padding: 0.6rem 0;
+                            border-bottom: 1px solid var(--border);
+                            display: flex; align-items: center; gap: 1rem; }
+        .contents-list li:last-child { border-bottom: none; }
+        .contents-list li::before { content: counter(contents, decimal-leading-zero);
+                                    font-family: var(--font-mono); font-size: 0.85rem;
+                                    color: var(--accent); min-width: 2rem; }
+        .contents-list a { color: var(--text-primary); text-decoration: none;
+                           transition: color 0.2s; }
+        .contents-list a:hover { color: var(--accent); }
+        .footer { text-align: center; padding: 3rem 1.5rem;
+                  color: var(--text-secondary); font-size: 0.85rem;
+                  border-top: 1px solid var(--border); max-width: var(--max-width);
+                  margin: 0 auto; }
+        .footer a { color: var(--accent); text-decoration: none; }
+        .footer a:hover { text-decoration: underline; }
+        .canvas-wrap { background: var(--bg-card); border: 1px solid var(--border);
+                       border-radius: 8px; padding: 1rem; margin: 1.25rem 0;
+                       overflow-x: auto; }
+        .canvas-wrap canvas, .canvas-wrap svg { display: block; margin: 0 auto;
+                                                 max-width: 100%; }
+        .deck-list { display: flex; flex-direction: column; gap: 0.6rem;
+                     list-style: none; padding: 0; counter-reset: deck; }
+        .deck-card { display: flex; gap: 1rem; padding: 1rem 1.25rem;
+                     background: var(--bg-card); border: 1px solid var(--border);
+                     border-left: 3px solid var(--accent); border-radius: 6px;
+                     transition: border-color 0.15s; counter-increment: deck; }
+        .deck-card:hover { border-color: var(--accent); }
+        .deck-card .num { font-family: var(--font-mono); font-size: 0.8rem;
+                          color: var(--accent); min-width: 2rem; padding-top: 0.15rem; }
+        .deck-card .num::before { content: counter(deck, decimal-leading-zero); }
+        .deck-card .body { flex: 1; min-width: 0; }
+        .deck-card .deck-title { font-family: var(--font-display); font-size: 1.05rem;
+                                 font-weight: 600; color: var(--text-primary);
+                                 margin-bottom: 0.2rem; }
+        .deck-card a.deck-title { text-decoration: none; }
+        .deck-card a.deck-title:hover { color: var(--accent); }
+        .deck-card .desc { font-size: 0.92rem; color: var(--text-secondary); }
+        .badge { display: inline-block; font-family: var(--font-mono);
+                 font-size: 0.65rem; padding: 0.1rem 0.45rem; border-radius: 999px;
+                 border: 1px solid var(--border); color: var(--text-secondary);
+                 vertical-align: middle; margin-left: 0.3rem; }
+        .badge.ok    { border-color: var(--accent); color: var(--accent); background: var(--accent-dim); }
+        .badge.warn  { border-color: #ffa657; color: #ffa657; background: rgba(255,166,87,0.08); }
+        .badge.bad   { border-color: #ff7b72; color: #ff7b72; background: rgba(255,123,114,0.08); }
+        .components-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem;
+                           margin: 1.5rem 0; }
+        .component-tile { padding: 1rem; background: var(--bg-card);
+                          border: 1px solid var(--border); border-left: 3px solid var(--accent);
+                          border-radius: 6px; transition: transform 0.15s, border-color 0.15s; }
+        .component-tile:hover { transform: translateY(-2px); border-color: var(--accent); }
+        .component-tile .ix { font-family: var(--font-mono); font-size: 0.7rem;
+                              color: var(--accent); letter-spacing: 0.1em; }
+        .component-tile h4 { font-family: var(--font-display); font-size: 1.05rem;
+                             color: var(--text-primary); margin: 0.2rem 0 0.4rem; }
+        .component-tile p { font-size: 0.85rem; color: var(--text-secondary); margin: 0; }
+        .ref-link { display: inline-block; padding: 0.4rem 0.8rem;
+                    border: 1px solid var(--accent); color: var(--accent);
+                    border-radius: 4px; text-decoration: none;
+                    font-family: var(--font-mono); font-size: 0.8rem;
+                    transition: background 0.15s; }
+        .ref-link:hover { background: var(--accent-dim); }
+        @media (max-width: 640px) {
+            .slide { padding: 3rem 1rem; min-height: auto; }
+            .slide-number { font-size: 3rem; top: 1.5rem; right: 1rem; }
+            .slide h2 { font-size: 1.5rem; }
+            .diagram-grid.cols-2, .diagram-grid.cols-3 { grid-template-columns: 1fr; }
+            .components-grid { grid-template-columns: 1fr; }
+            .pipeline { gap: 0.15rem; }
+            .pipeline-step { font-size: 0.6rem; padding: 0.2rem 0.4rem; }
+            .hero h1 { font-size: 1.8rem; }
+            table { font-size: 0.78rem; }
+        }
+    </style>
+</head>
+<body>
+<header class="hero">
+    <div class="series-label">Coding Agents Internals Series &mdash; Presentation 03</div>
+    <h1>Components of a <span class="accent">Coding Agent</span></h1>
+    <p class="subtitle">A companion to Sebastian Raschka&rsquo;s essay &mdash; the harness mental model, the four-step loop, and the six components that turn an LLM into Claude Code or Codex CLI. The first of five decks unpacking the article in detail.</p>
+    <div class="tags">
+        <span class="tag">Companion</span>
+        <span class="tag">Sebastian Raschka</span>
+        <span class="tag">Harness</span>
+        <span class="tag">Agent Loop</span>
+        <span class="tag">Claude Code</span>
+        <span class="tag">Codex</span>
+        <span class="tag">Mini Coding Agent</span>
+    </div>
+    <div class="pipeline">
+        <span class="pipeline-step">Engine (LLM)</span>
+        <span class="pipeline-arrow">&rarr;</span>
+        <span class="pipeline-step">Reasoning</span>
+        <span class="pipeline-arrow">&rarr;</span>
+        <span class="pipeline-step">Harness</span>
+        <span class="pipeline-arrow">&rarr;</span>
+        <span class="pipeline-step">Repo Context</span>
+        <span class="pipeline-arrow">&rarr;</span>
+        <span class="pipeline-step">Tools</span>
+        <span class="pipeline-arrow">&rarr;</span>
+        <span class="pipeline-step">Memory</span>
+        <span class="pipeline-arrow">&rarr;</span>
+        <span class="pipeline-step">Subagents</span>
+    </div>
+    <p style="margin-top: 1.5rem; font-size: 0.9rem;"><a class="ref-link" href="https://magazine.sebastianraschka.com/p/components-of-a-coding-agent" target="_blank" rel="noopener">Read the original article &rarr;</a></p>
+</header>
+
+<section class="slide" id="slide-00">
+    <div class="slide-number">00</div>
+    <h2>Topics We&rsquo;ll Cover</h2>
+    <ul class="contents-list">
+        <li><a href="#slide-01">Why &ldquo;Just Call the LLM&rdquo; Stops Working</a></li>
+        <li><a href="#slide-02">LLM vs Reasoning Model vs Agent</a></li>
+        <li><a href="#slide-03">The Engine Metaphor &mdash; Where the Harness Sits</a></li>
+        <li><a href="#slide-04">The Four-Step Loop &mdash; observe, inspect, choose, act</a></li>
+        <li><a href="#slide-05">The Six Components at a Glance</a></li>
+        <li><a href="#slide-06">Why the Harness Can Beat the Bigger Model</a></li>
+        <li><a href="#slide-07">Reading the Rest of the Series</a></li>
+        <li><a href="#slide-08">Things to Try Yourself</a></li>
+    </ul>
+
+    <div class="callout">
+        <div class="callout-label">How this series maps onto Raschka&rsquo;s article</div>
+        <p>This deck covers the framing and the high-level architecture. <strong>Decks 04&ndash;07</strong> take each of the six components in turn, with diagrams, code, and reflective exercises. The whole series is a companion &mdash; read alongside the article, not instead of it.</p>
+    </div>
+</section>
+
+<section class="slide" id="slide-01">
+    <div class="slide-number">01</div>
+    <h2>Why &ldquo;Just Call the LLM&rdquo; Stops Working</h2>
+    <p>The first time you wire <code>messages.create()</code> to your terminal, the experience is intoxicating. You type <em>&ldquo;refactor the auth flow to use JWT&rdquo;</em> and the model produces beautiful code. Then you actually try to use it on a real codebase, and something breaks. The model patches a function that no longer exists. It hallucinates an import path. It edits the wrong file. It re-reads the same 4&nbsp;000-line config on every turn.</p>
+
+    <p>Raschka opens with a deceptively simple observation: <em>much of the recent progress in practical LLM systems is not just about better models, but about how we use them.</em> The implication runs deep &mdash; <strong>the gap between &ldquo;LLM with code in chat&rdquo; and &ldquo;Claude Code&rdquo; is not mostly the model</strong>. It is the surrounding software.</p>
+
+    <div class="diagram-grid cols-2">
+        <div class="diagram-panel accent-border">
+            <h4>What you actually build over time</h4>
+            <ul>
+                <li>A way to <strong>summarise the repo</strong> upfront so the model isn&rsquo;t starting cold every turn.</li>
+                <li>A <strong>structured tool layer</strong> that turns the model&rsquo;s &ldquo;run this command&rdquo; into a validated, approvable, sandboxed action.</li>
+                <li>A <strong>memory system</strong> that compresses, deduplicates, and prioritises what stays in the prompt.</li>
+                <li>A way to <strong>delegate</strong> bounded subtasks rather than overloading one prompt.</li>
+            </ul>
+        </div>
+        <div class="diagram-panel accent-border">
+            <h4>What this software collectively becomes</h4>
+            <p>Raschka calls it the <strong>agent harness</strong>: &ldquo;a layer on top, which can be understood as a control loop around the model&rdquo; &mdash; software scaffolding that manages context, tool use, prompts, state, and control flow. When the harness is specialised for software-engineering tasks, it becomes a <strong>coding harness</strong>. Claude Code and Codex CLI are coding harnesses; their underlying models are not unique.</p>
+        </div>
+    </div>
+
+    <div class="callout">
+        <div class="callout-label">Pause and ask yourself</div>
+        <p>If you had to write down everything Cursor or Claude Code does <em>between</em> your keystroke and the LLM&rsquo;s reply, how many discrete steps would you list? Try this before reading on. The article&rsquo;s six components are essentially the answer &mdash; but seeing them yourself first makes the rest land harder.</p>
+    </div>
+</section>
+
+<section class="slide" id="slide-02">
+    <div class="slide-number">02</div>
+    <h2>LLM vs Reasoning Model vs Agent</h2>
+    <p>Three terms that get casually used interchangeably in marketing copy. Raschka draws sharp lines between them, because each is a real distinction in how the system is built.</p>
+
+    <div class="table-wrap">
+        <table>
+            <thead><tr><th>Term</th><th>What it is</th><th>Where the work happens</th></tr></thead>
+            <tbody>
+                <tr>
+                    <td><strong>LLM</strong></td>
+                    <td>The raw model &mdash; a next-token engine. Trained on a mix of language, code and human feedback.</td>
+                    <td>One forward pass produces one stream of tokens. No memory across calls. No tools.</td>
+                </tr>
+                <tr>
+                    <td><strong>Reasoning Model</strong></td>
+                    <td>An LLM further trained for &ldquo;intermediate reasoning, verification, or search&rdquo; &mdash; o1, R1, Claude with extended thinking, Gemini Thinking.</td>
+                    <td>Still a forward pass, but the model is incentivised to spend many tokens on hidden reasoning before producing the visible answer.</td>
+                </tr>
+                <tr>
+                    <td><strong>Agent</strong></td>
+                    <td>An LLM (reasoning or not) wrapped in a <em>control loop</em> that calls tools, manages memory, and iterates until a task is done.</td>
+                    <td>Across many forward passes &mdash; with software in between deciding what to feed the model next.</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <h3>An engine metaphor that scales</h3>
+    <p>Raschka offers a useful image: think of the LLM as an engine, the reasoning model as a beefed-up engine, and the agent harness as the rest of the car &mdash; the chassis, transmission, dashboard, and driver-assist features that turn the engine into something useful. A bigger engine matters; but a great chassis around a smaller engine often outperforms a bare engine alone.</p>
+
+    <div class="canvas-wrap">
+        <svg viewBox="0 0 720 220" width="720" height="220" xmlns="http://www.w3.org/2000/svg">
+            <style>
+                .lyr { fill: #0d1117; stroke: #21262d; }
+                .lyr-acc { fill: #0d1117; stroke: #76B900; }
+                .lyr-l { fill: #e6edf3; font-family: 'Space Grotesk', sans-serif; font-size: 14px; font-weight: 600; }
+                .lyr-d { fill: #8b949e; font-family: 'JetBrains Mono', monospace; font-size: 11px; }
+                .arr   { stroke: #76B900; stroke-width: 2; fill: none; marker-end: url(#arr); }
+            </style>
+            <defs>
+                <marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto">
+                    <path d="M 0 0 L 10 5 L 0 10 z" fill="#76B900"/>
+                </marker>
+            </defs>
+            <rect class="lyr" x="20"  y="40" width="160" height="140" rx="6"/>
+            <text class="lyr-l" x="100" y="70" text-anchor="middle">LLM</text>
+            <text class="lyr-d" x="100" y="92" text-anchor="middle">engine</text>
+            <text class="lyr-d" x="100" y="110" text-anchor="middle">next-token</text>
+            <text class="lyr-d" x="100" y="128" text-anchor="middle">prediction</text>
+            <text class="lyr-d" x="100" y="158" text-anchor="middle">no state</text>
+
+            <rect class="lyr" x="200" y="40" width="180" height="140" rx="6"/>
+            <text class="lyr-l" x="290" y="70" text-anchor="middle">Reasoning model</text>
+            <text class="lyr-d" x="290" y="92" text-anchor="middle">engine + thinking</text>
+            <text class="lyr-d" x="290" y="110" text-anchor="middle">trained to spend</text>
+            <text class="lyr-d" x="290" y="128" text-anchor="middle">tokens on internal</text>
+            <text class="lyr-d" x="290" y="146" text-anchor="middle">verification</text>
+
+            <rect class="lyr-acc" x="400" y="20" width="300" height="180" rx="6"/>
+            <text class="lyr-l" x="550" y="50" text-anchor="middle" fill="#76B900">Agent harness</text>
+            <text class="lyr-d" x="550" y="72" text-anchor="middle">control loop &middot; tools &middot; memory</text>
+            <text class="lyr-d" x="550" y="90" text-anchor="middle">prompt construction &middot; sandbox</text>
+            <text class="lyr-d" x="550" y="108" text-anchor="middle">approval gates &middot; subagents</text>
+            <rect class="lyr" x="430" y="130" width="240" height="50" rx="4"/>
+            <text class="lyr-d" x="550" y="150" text-anchor="middle">wraps a model (any kind)</text>
+            <text class="lyr-d" x="550" y="168" text-anchor="middle">domain-tuned for software work</text>
+
+            <line class="arr" x1="180" y1="110" x2="200" y2="110"/>
+            <line class="arr" x1="380" y1="110" x2="400" y2="110"/>
+
+            <text class="lyr-d" x="360" y="210" text-anchor="middle">specialisation increases &rarr;</text>
+        </svg>
+    </div>
+
+    <div class="callout">
+        <div class="callout-label">Raschka&rsquo;s sharper version of the claim</div>
+        <p>&ldquo;A good coding harness can make a reasoning and a non-reasoning model feel much stronger than it does in a plain chat box.&rdquo; The harness changes <em>what task the model is being asked to do on each turn</em> &mdash; from &ldquo;solve this entire engineering problem in your head&rdquo; to &ldquo;take one careful step on a problem someone has already laid out for you&rdquo;.</p>
+    </div>
+</section>
+
+<section class="slide" id="slide-03">
+    <div class="slide-number">03</div>
+    <h2>The Engine Metaphor &mdash; Where the Harness Sits</h2>
+    <p>Zooming in: a coding harness is not a single algorithm. It is a stack of small, mostly-independent pieces, each designed to make the next forward pass cheaper, safer, or more accurate.</p>
+
+    <div class="diagram-vertical">
+        <div class="diagram-box accent">User intent &mdash; &ldquo;fix the failing tests&rdquo;</div>
+        <div class="diagram-arrow">&darr;</div>
+        <div class="diagram-box">Workspace summary &mdash; what kind of project, branch, key files</div>
+        <div class="diagram-arrow">&darr;</div>
+        <div class="diagram-box">Stable prompt prefix &mdash; system, tools, repo facts (cacheable)</div>
+        <div class="diagram-arrow">&darr;</div>
+        <div class="diagram-box">Session memory &mdash; compact transcript &amp; working notes</div>
+        <div class="diagram-arrow">&darr;</div>
+        <div class="diagram-box">Tool layer &mdash; validate, approve, run, return bounded results</div>
+        <div class="diagram-arrow">&darr;</div>
+        <div class="diagram-box">Optional subagent &mdash; spawn for side question, return summary</div>
+        <div class="diagram-arrow">&darr;</div>
+        <div class="diagram-box accent">LLM forward pass &mdash; reads context, emits next action</div>
+    </div>
+
+    <p>Each box is a software component the harness owns. The model itself appears <em>once</em> at the bottom &mdash; everything above it is decision-making about what should reach the model next. That is what Raschka means by &ldquo;a control loop around the model&rdquo;.</p>
+
+    <h3>The runtime supports</h3>
+    <p>Raschka&rsquo;s Figure&nbsp;3 separates three layers of responsibility: the <strong>model family</strong> (the engine), the <strong>agent loop</strong> (the iterative driver), and the <strong>runtime supports</strong> (sandbox, file system, shell, network, IDE bindings, telemetry). The runtime supports often get hand-waved past, but they are what gives the agent its powers and its safety properties &mdash; the difference between &ldquo;the agent suggested running <code>rm -rf</code>&rdquo; and &ldquo;the agent ran <code>rm -rf</code> in a sandboxed worktree&rdquo;.</p>
+
+    <div class="diagram-grid cols-3">
+        <div class="diagram-panel accent-border">
+            <h4>Model family</h4>
+            <p>Which Claude / GPT / open-weight model. Provider, version, pricing, latency, context window. Often pluggable: <code>claude-opus-4-7</code> today, <code>claude-opus-5</code> tomorrow.</p>
+        </div>
+        <div class="diagram-panel accent-border">
+            <h4>Agent loop</h4>
+            <p>The control structure: how the harness decides when to call the model, when to call a tool, when to ask the user, when to stop. The loop also chooses <em>which</em> tool result to pass back.</p>
+        </div>
+        <div class="diagram-panel accent-border">
+            <h4>Runtime supports</h4>
+            <p>Filesystem, shell, network access, sandbox, approval UI, IDE integration, telemetry. The boring infrastructure that determines what the agent <em>can</em> do safely.</p>
+        </div>
+    </div>
+</section>
+
+<section class="slide" id="slide-04">
+    <div class="slide-number">04</div>
+    <h2>The Four-Step Loop &mdash; observe, inspect, choose, act</h2>
+    <p>At the heart of every coding harness is a tight, iterative loop. Raschka summarises it in four words: <strong>observe &middot; inspect &middot; choose &middot; act</strong>. Cursor, Aider, Claude Code, and Codex CLI all implement variants of this same loop.</p>
+
+    <div class="canvas-wrap">
+        <svg viewBox="0 0 700 320" width="700" height="320" xmlns="http://www.w3.org/2000/svg">
+            <style>
+                .node  { fill: #0d1117; stroke: #76B900; stroke-width: 2; }
+                .node-d{ fill: #161b22; stroke: #21262d; }
+                .lbl   { fill: #76B900; font-family: 'Space Grotesk', sans-serif; font-size: 16px; font-weight: 700; }
+                .sub   { fill: #8b949e; font-family: 'JetBrains Mono', monospace; font-size: 11px; }
+                .arr   { stroke: #76B900; stroke-width: 2; fill: none; marker-end: url(#a); }
+            </style>
+            <defs>
+                <marker id="a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="9" markerHeight="9" orient="auto">
+                    <path d="M 0 0 L 10 5 L 0 10 z" fill="#76B900"/>
+                </marker>
+            </defs>
+            <circle class="node" cx="350" cy="60"  r="50"/>
+            <text class="lbl" x="350" y="58" text-anchor="middle">observe</text>
+            <text class="sub" x="350" y="78" text-anchor="middle">read what changed</text>
+
+            <circle class="node" cx="610" cy="180" r="50"/>
+            <text class="lbl" x="610" y="178" text-anchor="middle">inspect</text>
+            <text class="sub" x="610" y="198" text-anchor="middle">prompt + tool results</text>
+
+            <circle class="node" cx="350" cy="290" r="50"/>
+            <text class="lbl" x="350" y="288" text-anchor="middle">choose</text>
+            <text class="sub" x="350" y="308" text-anchor="middle">next action</text>
+
+            <circle class="node" cx="90"  cy="180" r="50"/>
+            <text class="lbl" x="90"  y="178" text-anchor="middle">act</text>
+            <text class="sub" x="90"  y="198" text-anchor="middle">tool / edit / spawn</text>
+
+            <path class="arr" d="M 395 90 Q 540 110 575 145"/>
+            <path class="arr" d="M 575 215 Q 470 290 395 290"/>
+            <path class="arr" d="M 305 290 Q 145 270 130 215"/>
+            <path class="arr" d="M 125 145 Q 230 90 305 70"/>
+
+            <text class="sub" x="350" y="180" text-anchor="middle" font-size="13">harness</text>
+            <text class="sub" x="350" y="195" text-anchor="middle" font-size="13" fill="#76B900">control loop</text>
+        </svg>
+    </div>
+
+    <h3>Mapping each step</h3>
+    <ol>
+        <li><strong>observe</strong> &mdash; the harness gathers what has changed since the last turn: file diffs, last tool result, user message, build status, test failures. This is harness work, not model work.</li>
+        <li><strong>inspect</strong> &mdash; the model receives a carefully shaped prompt: the stable prefix, the relevant slice of memory, the latest observation. This is the only step where the model reasons about &ldquo;what now?&rdquo;.</li>
+        <li><strong>choose</strong> &mdash; the model emits a structured action: a tool call, a code edit, a question for the user, or a final answer. The harness validates that action.</li>
+        <li><strong>act</strong> &mdash; the harness executes the action in a sandbox: writes a file, runs a test, spawns a subagent. The result becomes the next observation, and the loop iterates.</li>
+    </ol>
+
+    <div class="callout">
+        <div class="callout-label">A subtle point about agency</div>
+        <p>Notice that the <em>model</em> is responsible only for the <em>choose</em> step. Everything else is software the harness author wrote. When people say &ldquo;the agent decided to do X&rdquo;, they almost always mean &ldquo;the model emitted an action and the harness ran it&rdquo;. Mistakes attributed to the model are often mistakes in the harness &mdash; in what the model was shown or in how its action was interpreted.</p>
+    </div>
+</section>
+
+<section class="slide" id="slide-05">
+    <div class="slide-number">05</div>
+    <h2>The Six Components at a Glance</h2>
+    <p>Raschka decomposes a working coding harness into six components. Each one is a focused engineering problem with its own design space, failure modes, and trade-offs. The rest of this series treats them in detail; this slide gives you the map.</p>
+
+    <div class="components-grid">
+        <div class="component-tile">
+            <div class="ix">COMPONENT 01</div>
+            <h4>Live Repo Context</h4>
+            <p>Build a workspace summary up front: project layout, key files, branch, test command. Stable facts the agent can reuse instead of starting from zero every turn. <em>Covered in deck&nbsp;04.</em></p>
+        </div>
+        <div class="component-tile">
+            <div class="ix">COMPONENT 02</div>
+            <h4>Prompt Shape &amp; Cache Reuse</h4>
+            <p>Separate stable prefix (system, tools, repo summary) from changing tail (memory, latest message). Lets the harness reuse a multi-thousand-token prefix at 10&times; cheaper. <em>Covered in deck&nbsp;04.</em></p>
+        </div>
+        <div class="component-tile">
+            <div class="ix">COMPONENT 03</div>
+            <h4>Tool Access &amp; Use</h4>
+            <p>Move from prose suggestions to bounded, validated actions. Each tool is named, schema-checked, optionally approved, and sandboxed. Less freedom, more reliability. <em>Covered in deck&nbsp;05.</em></p>
+        </div>
+        <div class="component-tile">
+            <div class="ix">COMPONENT 04</div>
+            <h4>Minimising Context Bloat</h4>
+            <p>Long contexts get expensive and noisy. Clip large outputs, dedupe repeated reads, summarise older turns, weight by recency. &ldquo;A lot of apparent model quality is really context quality.&rdquo; <em>Covered in deck&nbsp;06.</em></p>
+        </div>
+        <div class="component-tile">
+            <div class="ix">COMPONENT 05</div>
+            <h4>Structured Session Memory</h4>
+            <p>A small, distilled working memory (current task, important files, notes) sits beside the full transcript on disk. Storage-time discipline, not just prompt-time compression. <em>Covered in deck&nbsp;06.</em></p>
+        </div>
+        <div class="component-tile">
+            <div class="ix">COMPONENT 06</div>
+            <h4>Bounded Subagents</h4>
+            <p>Delegate side questions and parallelisable work to subagents that inherit context but with tighter boundaries. Spawn carefully &mdash; how to <em>bind</em> a subagent matters as much as how to start one. <em>Covered in deck&nbsp;07.</em></p>
+        </div>
+    </div>
+
+    <div class="callout">
+        <div class="callout-label">Why this is a list, not a hierarchy</div>
+        <p>None of the six components subsumes another &mdash; they are roughly orthogonal axes of harness design. You can have a great tool layer and a terrible memory system, or a tight memory system with no subagents. Real systems differ on which they prioritise: Claude Code emphasises tool-driven retrieval and bounded subagents; Aider leans on a precomputed repo map; Codex sandboxes hard. Raschka&rsquo;s contribution is the <em>vocabulary</em> for talking about these choices.</p>
+    </div>
+</section>
+
+<section class="slide" id="slide-06">
+    <div class="slide-number">06</div>
+    <h2>Why the Harness Can Beat the Bigger Model</h2>
+    <p>One of Raschka&rsquo;s more provocative claims: <em>&ldquo;the harness can often be the distinguishing factor that makes one LLM work better than another&rdquo;</em>. He goes further and speculates that capable open-weight models, given equivalent harnesses, would produce equivalent end-user experiences. Why might that be true?</p>
+
+    <div class="diagram-grid cols-2">
+        <div class="diagram-panel accent-border">
+            <h4>Per-step cognitive load</h4>
+            <p>Without a harness, the model is asked to <em>plan, read, decide, write, verify</em> &mdash; all in one forward pass. With a harness, each pass does one tiny step on a well-bounded problem. A 70B model doing one easy step often beats a 400B model doing one hard step.</p>
+        </div>
+        <div class="diagram-panel accent-border">
+            <h4>Recovery from mistakes</h4>
+            <p>A bare-LLM mistake is final &mdash; the wrong answer is the answer. A harness mistake is recoverable &mdash; the next turn sees the failed test, the bad diff, the missing file. The loop turns one-shot accuracy into something closer to a search procedure with feedback.</p>
+        </div>
+        <div class="diagram-panel accent-border">
+            <h4>Externalised state</h4>
+            <p>The model has no working memory across calls; the harness does. Decisions taken three turns ago are still in the working-memory file. The model contributes intuition; the harness contributes <em>continuity</em>.</p>
+        </div>
+        <div class="diagram-panel accent-border">
+            <h4>Tools widen the action space</h4>
+            <p>An LLM can suggest <code>git status</code>; a harness can run it and feed back the actual output. The agent observes ground truth, not its own predictions about ground truth. This turns out to matter enormously for correctness on real codebases.</p>
+        </div>
+    </div>
+
+    <div class="callout">
+        <div class="callout-label">Implication for system designers</div>
+        <p>If you find yourself reaching for a more capable (and more expensive) model to fix a quality issue, ask first: <em>can I shape the next prompt better, or break this turn into smaller pieces, or feed it real tool output instead of asking it to guess?</em> Raschka&rsquo;s essay is, in part, a long argument that those harness-level levers are usually cheaper and almost always more durable.</p>
+    </div>
+
+    <h3>Where the harness <em>cannot</em> save you</h3>
+    <ul>
+        <li><strong>Concept-level reasoning</strong> &mdash; if the underlying model can&rsquo;t reason about a concurrency bug class at all, no amount of context shaping will introduce that capability.</li>
+        <li><strong>Long-tail languages and frameworks</strong> &mdash; a 7B model trained mostly on Python will not write idiomatic Zig because you fed it more context.</li>
+        <li><strong>Adversarial inputs</strong> &mdash; a harness that grants tool access to a model that doesn&rsquo;t reliably respect instructions creates a security surface, not a productivity gain.</li>
+    </ul>
+</section>
+
+<section class="slide" id="slide-07">
+    <div class="slide-number">07</div>
+    <h2>Reading the Rest of the Series</h2>
+    <p>Each of the next four decks expands one or two components in depth, with diagrams, code, and prompts to take into your own work. Read them in order or jump to whichever component you&rsquo;re actively working on.</p>
+
+    <ol class="deck-list">
+        <li class="deck-card">
+            <div class="num"></div>
+            <div class="body">
+                <a class="deck-title" href="https://brendanjameslynskey.github.io/CodingAgents_04_Raschka_Repo_Context_And_Caching/">Live Repo Context &amp; Prompt-Cache Reuse &rarr;</a>
+                <div class="desc">Components&nbsp;1 + 2. What goes into a workspace summary; the prompt-prefix architecture; how the Anthropic / OpenAI prompt cache turns a 6&nbsp;k-token system prompt from a recurring tax into a one-time cost.</div>
+            </div>
+        </li>
+        <li class="deck-card">
+            <div class="num"></div>
+            <div class="body">
+                <a class="deck-title" href="https://brendanjameslynskey.github.io/CodingAgents_05_Raschka_Tool_Use/">Tool Access &amp; Use &rarr;</a>
+                <div class="desc">Component&nbsp;3. From prose suggestions to bounded actions: tool-call schemas, validation gates, approval UX, sandbox boundaries, and the design discipline that keeps the model honest.</div>
+            </div>
+        </li>
+        <li class="deck-card">
+            <div class="num"></div>
+            <div class="body">
+                <a class="deck-title" href="https://brendanjameslynskey.github.io/CodingAgents_06_Raschka_Context_Bloat_And_Memory/">Minimising Context Bloat &amp; Structured Session Memory &rarr;</a>
+                <div class="desc">Components&nbsp;4 + 5. Clipping, deduplication, recency-weighted summarisation. Working memory vs full transcript &mdash; storage-time structure that survives across turns and even sessions.</div>
+            </div>
+        </li>
+        <li class="deck-card">
+            <div class="num"></div>
+            <div class="body">
+                <a class="deck-title" href="https://brendanjameslynskey.github.io/CodingAgents_07_Raschka_Subagents_And_Synthesis/">Bounded Subagents &amp; Synthesis &rarr;</a>
+                <div class="desc">Component&nbsp;6 plus a closing synthesis. Why delegate, how to <em>bind</em> rather than just <em>spawn</em>, sandboxing patterns, Claude Code vs Codex differences, and a reading list to take you further.</div>
+            </div>
+        </li>
+    </ol>
+</section>
+
+<section class="slide" id="slide-08">
+    <div class="slide-number">08</div>
+    <h2>Things to Try Yourself</h2>
+    <p>The article is much more useful if you do something with it &mdash; even a small thing. Here are five exercises, in increasing depth, you can do alongside the series.</p>
+
+    <div class="diagram-grid cols-2">
+        <div class="diagram-panel accent-border">
+            <h4>30 minutes &mdash; observe Claude Code</h4>
+            <p>Open Claude Code on a small repo and run a single task. Note every tool call you see in the transcript. Try to label each call as <em>observe</em>, <em>inspect</em>, <em>choose</em>, or <em>act</em>. Where does the harness end and the model begin?</p>
+        </div>
+        <div class="diagram-panel accent-border">
+            <h4>1 hour &mdash; read the mini coding agent</h4>
+            <p>Raschka&rsquo;s reference implementation lives at <a href="https://github.com/rasbt/mini-coding-agent" target="_blank" rel="noopener">github.com/rasbt/mini-coding-agent</a>. Walk the code with the article open in another tab. Find the line where each of the six components is implemented.</p>
+        </div>
+        <div class="diagram-panel accent-border">
+            <h4>2 hours &mdash; profile your own prompt</h4>
+            <p>If you&rsquo;ve built any agentic system, dump a real prompt and label each section. What fraction is stable prefix? Changing tail? How much of the changing tail is genuinely new vs duplicated content? You&rsquo;ll find waste.</p>
+        </div>
+        <div class="diagram-panel accent-border">
+            <h4>An afternoon &mdash; build a 200-line harness</h4>
+            <p>Wire <code>messages.create()</code> + a single <code>read_file</code> tool + a working-memory JSON file. Make the loop iterate until the model says &ldquo;done&rdquo;. The discomfort of choosing context shapes will teach you more than any article.</p>
+        </div>
+        <div class="diagram-panel accent-border">
+            <h4>A weekend &mdash; replace one component</h4>
+            <p>In your toy harness, swap one component for a smarter version: add prompt caching, or a clipping rule, or a validating tool layer. Measure cost and accuracy before and after on a fixed task suite of your own.</p>
+        </div>
+        <div class="diagram-panel accent-border">
+            <h4>Ongoing &mdash; pattern-spot in others&rsquo; agents</h4>
+            <p>Whenever you use Cursor, Aider, Codex, or any new agent, identify which of the six components it leans on hardest and which it skimps on. The vocabulary turns marketing copy into reverse-engineering.</p>
+        </div>
+    </div>
+
+    <div class="callout">
+        <div class="callout-label">A meta-prompt to take into your team</div>
+        <p>Next time someone says &ldquo;the model isn&rsquo;t smart enough&rdquo;, ask the six-component question: <em>did we give it the right context, the right tools, the right memory, and the right task scope?</em> If three of those are honestly &ldquo;yes&rdquo;, only then is it the model&rsquo;s fault.</p>
+    </div>
+</section>
+
+<footer class="footer">
+    <p>Companion to <a href="https://magazine.sebastianraschka.com/p/components-of-a-coding-agent" target="_blank" rel="noopener">Sebastian Raschka, &ldquo;Components of a Coding Agent&rdquo;</a></p>
+    <p>Part of the <a href="https://github.com/BrendanJamesLynskey/LLM_Hub_Coding_Agents">Coding Agents Internals Series</a></p>
+    <p style="margin-top: 0.5rem; font-size: 0.8rem;"><a href="https://github.com/BrendanJamesLynskey/LLM_Hub_Coding_Agents">Back to Series Index</a></p>
+</footer>
+
+<script>
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function (e) {
+            e.preventDefault();
+            const target = document.querySelector(this.getAttribute('href'));
+            if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        });
+    });
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.style.opacity = '1';
+                entry.target.style.transform = 'translateY(0)';
+            }
+        });
+    }, { threshold: 0.1 });
+    document.querySelectorAll('.slide').forEach(slide => {
+        slide.style.opacity = '0';
+        slide.style.transform = 'translateY(30px)';
+        slide.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+        observer.observe(slide);
+    });
+</script>
+</body>
+</html>
